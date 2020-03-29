@@ -189,7 +189,7 @@ module.exports = function (grunt) {
         'jshint',
         'jshint:grunt',
         'jscs',
-        'jasmine:coverage'
+        // 'jasmine:coverage'
     ]);
 
     grunt.registerTask('build', [
