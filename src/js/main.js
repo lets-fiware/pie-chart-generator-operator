@@ -13,28 +13,63 @@
     var init = function init() {
         MashupPlatform.wiring.registerCallback("number-serie", numberSerieCallback);
         MashupPlatform.wiring.registerCallback("label-serie", labelSerieCallback);
+
+        clearPlot();
     };
 
-    var labelSerieCallback = function labelSerieCallback (data) {
-        if (data) {
-            var labelSerie = toNumberSerie(data);
-            labelSerie = calculateSeries(labelSerie);
-            series = labelSerie;
-            series.metadata = data.metadata || {};
-            build_pie_chart(series);
+    var clearPlot = function clearPlot() {
+        if (window.MashupPlatform != null) {
+            MashupPlatform.wiring.pushEvent("chart-options", {
+                "title": {
+                    "text": MashupPlatform.prefs.get('title')
+                },
+                "series": []
+            });
         }
     };
 
-    var numberSerieCallback = function numberSerieCallback (data) {
-        if (data) {
-            var numberSerie = data;
-            numberSerie = calculateSeries(numberSerie);
-            series = numberSerie;
-            series.metadata = data.metadata || {};
-            build_pie_chart(series);
+    var labelSerie = null;
+    var numberSerie = null;
+    var metadata = {};
+
+    var build_series = function build_series() {
+        var series = [];
+
+        if (labelSerie == null || labelSerie.length === 0 || numberSerie == null || numberSerie.length === 0) {
+            if (labelSerie == null && numberSerie == null) {
+                clearPlot();
+            }
+            return;
         }
+
+        if (labelSerie.length != numberSerie.length) {
+            return;
+        }
+
+        for (var i = 0; i < labelSerie.length; i++) {
+            series.push({name: labelSerie[i], y: numberSerie[i]});
+        }
+        series.metadata = metadata;
+        build_pie_chart(series);
     };
 
+    var labelSerieCallback = function labelSerieCallback(data) {
+        labelSerie = data;
+        if (data != null) {
+            metadata = data.metadata || metadata;
+        }
+        build_series();
+    };
+
+    var numberSerieCallback = function numberSerieCallback(data) {
+        numberSerie = data;
+        if (data != null) {
+            metadata = data.metadata || metadata;
+        }
+        build_series();
+    };
+
+    /*
     var toNumberSerie = function toNumberSerie (serie) {
         var result = [];
 
@@ -58,6 +93,7 @@
         }
         return result;
     };
+    */
 
     var dataHandler = function dataHandler (pie) {
         var filterBy = pie.name;
@@ -105,9 +141,5 @@
 
     init();
 
-    /* test-code */
-    window.labelSerieCallback = labelSerieCallback;
-    window.numberSerieCallback = numberSerieCallback;
-    /* end-test-code */
 
 })();
