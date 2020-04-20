@@ -2,6 +2,10 @@
 
 Generates a pie chart from a dataset
 
+**NOTE:**
+This WireCloud operator is based on pie-chart-generator-operator of [agile-dashboards](https://github.com/Wirecloud/agile-dashboards)
+created by CoNWeT Lab., Universidad Politecnica de Madrid and Future Internet Consulting and Development Solutions S.L..
+
 ## Settings
 
 - `Chart Title`: The title for the chart.
